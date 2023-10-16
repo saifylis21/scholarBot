@@ -1,5 +1,7 @@
 import React from "react";
-import { 
+import {
+  Image,
+  Input,
   Navbar,
   NavbarBrand,
   NavbarContent,
@@ -8,9 +10,11 @@ import {
   Button,
   NavbarMenu,
   NavbarMenuItem,
-  NavbarMenuToggle} from "@nextui-org/react";
+  NavbarMenuToggle,
+  } from "@nextui-org/react";
 
-import {Image} from "@nextui-org/react";
+import {} from "@nextui-org/react";
+import {Card, CardHeader, CardBody, CardFooter} from "@nextui-org/react";
 
 export default function Home() {
 
@@ -27,7 +31,7 @@ export default function Home() {
   return (
     <>
       <header>
-        <Navbar onMenuOpenChange={setIsMenuOpen} className="bg-slate-900">
+        <Navbar onMenuOpenChange={setIsMenuOpen} className="absolute bg-slate-900">
           <NavbarContent>
             <NavbarMenuToggle
               aria-label={isMenuOpen ? "Close menu" : "Open menu"}
@@ -95,7 +99,7 @@ export default function Home() {
         </div>
       </main>
 
-      <div className="w-full h-screen flex justify-center items-center bg-slate-900 py-16">
+      <div className="h-screen w-full bg-slate-900 flex justify-center items-center px-10">
         <div className="w-[1024px] text-white flex justify-center lg:justify-between">
           <Image
             className="hidden lg:flex"
@@ -120,6 +124,93 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      <div className="w-full w-[1024px] bg-pink-500 py-16 px-10 flex justify-center items-center">
+        <div>
+          <h1 className="text-white text-center font-bold mb-8 text-3xl lg:text-5xl">How Can ScholarAI Help You?</h1>
+          <form>
+            <div className="flex items-center w-full gap-4">
+              <Input size="lg" type="text" placeholder="Ask Anything..." />
+              <Button className="bg-slate-900 font-bold text-white" size="lg">
+                Enter
+              </Button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div className="w-full bg-slate-900 flex justify-center py-16 px-10">
+        <div className="w-[900px] gap-2 grid grid-cols-12 grid-rows-2">
+          <Card className="col-span-12 sm:col-span-4 h-[300px]">
+            <CardHeader className="absolute z-10 top-1 flex-col !items-start">
+              <p className="text-tiny text-white/60 uppercase font-bold">Use it all the time</p>
+              <h4 className="text-white font-medium text-large">Available 24/7</h4>
+            </CardHeader>
+            <Image
+              removeWrapper
+              alt="Card background"
+              className="z-0 w-full h-full object-cover"
+              src="static/images/pic1.jpg"
+            />
+          </Card>
+          <Card className="col-span-12 sm:col-span-4 h-[300px]">
+            <CardHeader className="absolute z-10 top-1 flex-col !items-start">
+              <p className="text-tiny text-white/60 uppercase font-bold">It's in your pocket</p>
+              <h4 className="text-white font-medium text-large">Use it on your mobile</h4>
+            </CardHeader>
+            <Image
+              removeWrapper
+              alt="Card background"
+              className="z-0 w-full h-full object-cover"
+              src="static/images/pic3.jpg"
+            />
+          </Card>
+          <Card className="col-span-12 sm:col-span-4 h-[300px]">
+            <CardHeader className="absolute z-10 top-1 flex-col !items-start">
+              <p className="text-tiny text-white/60 uppercase font-bold">Study easily</p>
+              <h4 className="text-white font-medium text-large">Study like a scholar</h4>
+            </CardHeader>
+            <Image
+              removeWrapper
+              alt="Card background"
+              className="z-0 w-full h-full object-cover"
+              src="static/images/pic4.jpg"
+            />
+          </Card>
+          <Card isFooterBlurred className="w-full h-[300px] col-span-12 sm:col-span-5">
+            <CardHeader className="absolute z-10 top-1 flex-col !items-start">
+              <p className="text-tiny text-white/60 uppercase font-bold">Scholar AI</p>
+              <h4 className="text-white font-medium text-large">Become a scholar</h4>
+            </CardHeader>
+            <Image
+              removeWrapper
+              alt="Card background"
+              className="z-0 w-full h-full object-cover"
+              src="static/images/pic2.jpg"
+            />
+            <CardFooter className="absolute bg-white/30 bottom-0 border-t-1 border-zinc-100/50 z-10 justify-between">
+              <p className="text-black text-tiny">Start now.</p>
+              <p className="text-black text-tiny">It's free.</p>
+            </CardFooter>
+          </Card>
+          <Card isFooterBlurred className="w-full h-[300px] col-span-12 sm:col-span-7">
+            <CardHeader className="absolute z-10 top-1 flex-col !items-start">
+              <p className="text-tiny text-white/60 uppercase font-bold">World class study material</p>
+              <h4 className="text-white font-medium text-large">Best study answers</h4>
+            </CardHeader>
+            <Image
+              removeWrapper
+              alt="Card background"
+              className="z-0 w-full h-full object-cover"
+              src="static/images/pic5.jpg"
+            />
+            <CardFooter className="absolute bg-black/40 bottom-0 z-10 border-t-1 border-default-600 dark:border-default-100">
+              <p className="text-tiny text-white/60">ScholarAI App<br/>Your Personal AI Tutor.</p>
+            </CardFooter>
+          </Card>
+        </div>
+      </div>
+
     </>
   )
 }
