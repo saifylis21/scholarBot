@@ -167,8 +167,8 @@ export default function Home() {
           </Card>
           <Card className="col-span-12 sm:col-span-4 h-[300px]">
             <CardHeader className="absolute z-10 top-1 flex-col !items-start">
-              <p className="text-tiny text-white/60 uppercase font-bold">Study easily</p>
-              <h4 className="text-white font-medium text-large">Study like a scholar</h4>
+              <p className="text-tiny text-white/60 uppercase font-bold">Versatile</p>
+              <h4 className="text-white font-medium text-large">Choose from a range of subjects</h4>
             </CardHeader>
             <Image
               removeWrapper
@@ -208,6 +208,39 @@ export default function Home() {
               <p className="text-tiny text-white/60">ScholarAI App<br/>Your Personal AI Tutor.</p>
             </CardFooter>
           </Card>
+        </div>
+      </div>
+
+      <div className="w-full py-16 px-10 flex justify-center bg-black text-white">
+        <div className="w-[1024px] flex gap-4 flex-wrap justify-between">
+          <div className="shrink-0">
+            <h1 className="font-bold text-2xl mb-5">Logo</h1>
+            <p className="text-zinc-500">njfdjknfdsnjdffdsafdfdssafdsf</p>
+          </div>
+          <div className="shrink-0">
+            <h1 className="font-bold text-2xl mb-5">Links</h1>
+            <ul className="text-zinc-500">
+              <li>link name1</li>
+              <li>link name2</li>
+              <li>link name3</li>
+              <li>link name4</li>
+              <li>link name5</li>
+            </ul>
+          </div>
+          <div className="shrink-0">
+            <h1 className="font-bold text-2xl mb-5">Subjects</h1>
+            <ul className="text-zinc-500">
+              <li>sub name1</li>
+              <li>sub name2</li>
+              <li>sub name3</li>
+              <li>sub name4</li>
+              <li>sub name5</li>
+            </ul>
+          </div>
+          <div className="shrink-0">
+            <h1 className="font-bold text-2xl mb-5">Contact</h1>
+            <p className="text-zinc-500">njfdjknfdsnjdfsafdsf</p>
+          </div>
         </div>
       </div>
 
