@@ -24,7 +24,7 @@ const Nav = () => {
 
     return (
         <header>
-            <Navbar onMenuOpenChange={setIsMenuOpen} className="absolute bg-slate-900">
+            <Navbar onMenuOpenChange={setIsMenuOpen} className="bg-slate-900">
             <NavbarContent>
                 <NavbarMenuToggle
                 aria-label={isMenuOpen ? "Close menu" : "Open menu"}
