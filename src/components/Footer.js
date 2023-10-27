@@ -1,7 +1,7 @@
 
 
 const Footer = () => (
-    <footer className="w-full py-16 px-10 flex justify-center bg-black text-white">
+    <footer className="w-full py-16 px-6 flex justify-center bg-black text-white">
         <div className="w-[1024px] flex gap-4 flex-wrap justify-between">
         <div className="shrink-0">
             <h1 className="font-bold text-2xl mb-5">Logo</h1>
