@@ -1,93 +1,112 @@
 import { Button, Textarea, Select, SelectItem, ScrollShadow } from "@nextui-org/react";
 import { subjects } from "@/data/subjects";
-import { levels } from "@/data/levels";
+import { grades } from "@/data/grades";
 import { useRouter } from 'next/router';
 import { useState, useEffect } from "react";
 
 export default function Question() {
 
   const router = useRouter();
+  const [response, setResponse] = useState('');
 
-  const [questionData, setQuestionData] = useState({
-    subject: "",
-    level: "",
-    question: ""
-  });
+  const { questionData } = router.query
 
   useEffect(() => {
-    // Deserialize the query parameter into an object
-    const { questionData: serializedQuestionData } = router.query;
-    if (serializedQuestionData) {
-      setQuestionData(JSON.parse(serializedQuestionData));
+    if (questionData) {
+      const parsedQuestionData = JSON.parse(questionData);
+
+      // Send a POST request with the questionData
+      const postData = async () => {
+        try {
+          const response = await fetch('https://j41h2gukz6.execute-api.us-east-1.amazonaws.com/dev/openai-path', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: questionData,
+          });
+          // Handle the response as needed
+          if (response.ok) {
+            const responseData = await response.json();
+            setResponse(responseData);
+          } else {
+            // Handle error
+            console.error('Request failed');
+          }
+        } catch (error) {
+          // Handle errors
+          console.error('Error sending POST request:', error);
+        }
+      };
+
+      postData();
     }
-  }, [router.query]);
+  }, [questionData]);
 
+  return (
+    <>
+      <div className="bg-zinc-700 w-full h-screen flex justify-center mt-[64px]">
+          <div className="flex w-[1024px] flex-wrap md:flex-nowrap gap-6 px-6 py-5">
+              <div className="w-full rounded-xl h-fit bg-zinc-800">
+                <div className="p-5 border-b-2 border-zinc-700">
+                  <h1 className="text-white font-bold text-3xl">Question</h1>
+                </div>
+                <div className="p-5">
+                  <div className="flex flex-col gap-4">
+                    <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
+                      <Select
+                          label="Subject"
+                          placeholder={"Choose subject"}
+                          labelPlacement="inside"
+                          className="w-full md:max-w-sm"
+                      >
+                          {subjects.map((subject) => (
+                          <SelectItem key={subject.value} value={subject.value}>
+                              {subject.label}
+                          </SelectItem>
+                          ))}
+                      </Select>
 
-  console.log("questionData:", questionData)
+                      <Select
+                          label="Grade"
+                          placeholder="Choose grade"
+                          labelPlacement="inside"
+                          className="w-full md:max-w-sm"
+                      >
+                          {grades.map((grade) => (
+                          <SelectItem key={grade.value} value={grade.value}>
+                              {grade.label}
+                          </SelectItem>
+                          ))}
+                      </Select>
+                    </div>
 
-    return (
-      <>
-        <div className="bg-zinc-700 w-full h-screen flex justify-center mt-[64px]">
-            <div className="flex w-[1024px] flex-wrap md:flex-nowrap gap-6 px-6 py-5">
-                <div className="w-full rounded-xl h-fit bg-zinc-800">
-                  <div className="p-5 border-b-2 border-zinc-700">
-                    <h1 className="text-white font-bold text-3xl">Question</h1>
-                  </div>
-                  <div className="p-5">
-                    <div className="flex flex-col gap-4">
-                      <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
-                        <Select
-                            label="Subject"
-                            placeholder={"Choose subject"}
-                            labelPlacement="inside"
-                            className="w-full md:max-w-sm"
-                        >
-                            {subjects.map((subject) => (
-                            <SelectItem key={subject.value} value={subject.value}>
-                                {subject.label}
-                            </SelectItem>
-                            ))}
-                        </Select>
+                    <div>
+                      <Textarea
+                          label="Your homework question"
+                          labelPlacement="inside"
+                          placeholder="Enter your homework question here..."
+                          className="w-full"
+                      />
+                    </div>
 
-                        <Select
-                            label="Level"
-                            placeholder="Choose level"
-                            labelPlacement="inside"
-                            className="w-full md:max-w-sm"
-                        >
-                            {levels.map((level) => (
-                            <SelectItem key={level.value} value={level.value}>
-                                {level.label}
-                            </SelectItem>
-                            ))}
-                        </Select>
-                      </div>
-
-                      <div>
-                        <Textarea
-                            label="Your homework question"
-                            labelPlacement="inside"
-                            placeholder="Enter your homework question here..."
-                            className="w-full"
-                        />
-                      </div>
-
-                      <div className="flex justify-center">
-                        <Button color="success" className="w-full font-bold text-white">
-                            Answer
-                        </Button>
-                      </div>
+                    <div className="flex justify-center">
+                      <Button color="success" className="w-full font-bold text-white">
+                          Answer
+                      </Button>
                     </div>
                   </div>
                 </div>
-                <div className="w-full rounded-xl h-fit bg-zinc-800">
-                  <div className="p-5 border-b-2 border-zinc-700">
-                    <h1 className="text-white font-bold text-3xl">Result</h1>
-                  </div>
-                  <div className="p-5">
-                    <h2 className="text-white font-bold text-lg mb-2">Answer</h2>
-                    <p className="text-white font-extralight text-sm mb-2">The answer to your question</p>
-                    <ScrollShadow className="w-full bg-zinc-700 rounded-xl p-4 text-white h-[400px] border-1 border-zinc-500">
+              </div>
+              <div className="w-full rounded-xl h-fit bg-zinc-800">
+                <div className="p-5 border-b-2 border-zinc-700">
+                  <h1 className="text-white font-bold text-3xl">Result</h1>
+                </div>
+                <div className="p-5">
+                  <h2 className="text-white font-bold text-lg mb-2">Answer</h2>
+                  <p className="text-white font-extralight text-sm mb-2">The answer to your question</p>
+                  <ScrollShadow className="w-full bg-zinc-700 rounded-xl p-4 text-white h-[400px] border-1 border-zinc-500">
+                    {response ? <div><p>{response.result}</p></div> : (
                       <div>
                         <p>
                           Sit nulla est ex deserunt exercitation anim occaecat. Nostrud ullamco deserunt aute id consequat veniam incididunt duis in sint irure nisi. Mollit officia cillum Lorem ullamco minim nostrud elit officia tempor esse quis.
@@ -120,11 +139,12 @@ export default function Question() {
                           Culpa qui reprehenderit nostrud aliqua reprehenderit et ullamco proident nisi commodo non ut. Ipsum quis irure nisi sint do qui velit nisi. Sunt voluptate eu reprehenderit tempor consequat eiusmod Lorem irure velit duis Lorem laboris ipsum cupidatat. Pariatur excepteur tempor veniam cillum et nulla ipsum veniam ad ipsum ad aute. Est officia duis pariatur ad eiusmod id voluptate.
                         </p>
                       </div>
-                    </ScrollShadow>
-                  </div>
+                    )}
+                  </ScrollShadow>
                 </div>
-            </div>
-        </div>
-      </>
-    )
-  }
+              </div>
+          </div>
+      </div>
+    </>
+  )
+}

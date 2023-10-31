@@ -19,14 +19,6 @@ const Nav = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const {user, googleSignIn, logOut} = UserAuth();
 
-    const handleSignIn = async () => {
-        try {
-            await googleSignIn()
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
     const handleSignOut = async () => {
         try {
             await logOut()
@@ -85,7 +77,7 @@ const Nav = () => {
                         <>
                             <NavbarItem>
                                 <Link href="/authentication" className="font-bold text-sm text-white bg-red-500 py-3 px-4 rounded-lg">
-                                    Sign Up
+                                    Sign In
                                 </Link>
                             </NavbarItem>
                         </>

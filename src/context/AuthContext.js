@@ -6,7 +6,7 @@ const AuthContext = createContext()
 
 export const AuthContextProvider = ({children}) => {
 
-    const [user, setUser] = useState('Saif Sadiq')
+    const [user, setUser] = useState('')
 
     const googleSignIn = () => {
         const provider = new GoogleAuthProvider()

@@ -1,8 +1,11 @@
 import { Button, Textarea, Select, SelectItem } from "@nextui-org/react";
 import { subjects } from "@/data/subjects";
-import { levels } from "@/data/levels";
+import { grades } from "@/data/grades";
 import { useRouter } from 'next/router';
 import { useState } from "react";
+import { arrayUnion, collection, doc, increment, addDoc, setDoc, getDoc, updateDoc } from "firebase/firestore";
+import { db } from "@/firebase/firebase";
+import { UserAuth } from "@/context/AuthContext";
 
 const TitleGrad = () => {
 
@@ -10,12 +13,14 @@ const TitleGrad = () => {
 
     const [questionData, setQuestionData] = useState({
         subject: "",
-        level: "",
+        grade: "",
         question: ""
     })
 
     const [subjectValue, setSubjectValue] = useState(new Set([]));
-    const [levelValue, setLevelValue] = useState(new Set([]))
+    const [gradeValue, setGradeValue] = useState(new Set([]))
+
+    const {user} = UserAuth();
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -27,16 +32,54 @@ const TitleGrad = () => {
             ...questionData,
             subject: value
           });
-        } else if (name === 'level') {
-          setLevelValue(new Set([value]));
+        } else if (name === 'grade') {
+          setGradeValue(new Set([value]));
           setQuestionData({
             ...questionData,
-            level: value
+            grade: value
           });
         }
     };
     
-    const handleButtonClick = () => {
+    const handleButtonClick = async () => {
+
+        if(user && user.email) {
+            try {
+                const quesDocRef = doc(db, "userQuestions", user.email);
+
+                // Check if a document with the provided user email exists
+                const docSnapshot = await getDoc(quesDocRef);
+
+                if (docSnapshot.exists()) {
+                    await updateDoc(quesDocRef, {
+                        questions: arrayUnion(questionData),
+                        questionsNum: increment(1)
+                    });
+                    console.log("Document updated with ID", user.email);
+                } else {
+                    await setDoc(quesDocRef, {
+                        email: user.email,
+                        questions: arrayUnion(questionData),
+                        questionsNum: 1
+                    });
+                    console.log("New document created with ID", user.email);
+                }
+            } catch (err) {
+                console.log("document was not written");
+                console.log(err);
+            }
+        } else {
+            try {
+                const docRef = await addDoc(collection(db, "otherQuestions"), {
+                    question: questionData
+                })
+                console.log("document written with ID", docRef.id)
+            } catch (err) {
+                console.log("document was not written");
+                console.log(err);
+            }
+        }
+
         // Redirect to the /question page with data as a query parameter
         router.push({
           pathname: '/question',
@@ -74,17 +117,17 @@ const TitleGrad = () => {
 
 
                             <Select
-                                name="level"
-                                label="Level"
-                                placeholder="Choose level"
+                                name="grade"
+                                label="Grade"
+                                placeholder="Choose grade"
                                 labelPlacement="inside"
                                 className="w-full"
-                                selectedKeys={levelValue}
+                                selectedKeys={gradeValue}
                                 onChange={handleInputChange}
                             >
-                                {levels.map((level) => (
-                                <SelectItem key={level.value} value={level.value}>
-                                    {level.label}
+                                {grades.map((grade) => (
+                                <SelectItem key={grade.value} value={grade.value}>
+                                    {grade.label}
                                 </SelectItem>
                                 ))}
                             </Select>
