@@ -1,4 +1,4 @@
-import { Button, Textarea, Select, SelectItem, ScrollShadow } from "@nextui-org/react";
+import { Button, Textarea, Select, SelectItem, ScrollShadow, Spinner } from "@nextui-org/react";
 import { subjects } from "@/data/subjects";
 import { grades } from "@/data/grades";
 import { useRouter } from 'next/router';
@@ -7,18 +7,51 @@ import { useState, useEffect } from "react";
 export default function Question() {
 
   const router = useRouter();
-  const [response, setResponse] = useState('');
+
+  const [answer, setAnswer] = useState("");
+  const [explanation, setExplanation] = useState("");
+  const [steps, setSteps] = useState("");
 
   const { questionData } = router.query
+  console.log("questionData:", questionData);
+
+  const extractContent = (input) => {
+    // const apiResponse = "Answer: 4\n\nExplanation: When we add 2 and 2 together, we get a total of 4. This is because addition is a process of combining two or more numbers to find their total value. In this case, we are combining two 2's, so the answer is 4.\n\nSteps: \n\nTo find the answer, we can simply add the numbers together:\n\n2 + 2 = 4";
+
+    // Splitting the string based on the headings
+    const parts = input.split('\n\n');
+    
+    // Find the index of each heading
+    const answerIndex = parts.findIndex(part => part.includes('Answer:'));
+    const explanationIndex = parts.findIndex(part => part.includes('Explanation:'));
+    const stepsIndex = parts.findIndex(part => part.includes('Steps:'));
+    
+    // Extract content based on the found indices
+    const answer = parts[answerIndex].split(': ')[1];
+    const explanation = parts[explanationIndex].split(': ')[1];
+    const steps = (parts.slice(stepsIndex).join('\n\n')).replace('Steps:','');
+
+    console.log("parts:", parts)
+    
+    console.log("Content between 'Answer:' and 'Explanation:'");
+    console.log(answer);
+    
+    console.log("\nContent between 'Explanation:' and 'Steps:'");
+    console.log(explanation);
+    
+    console.log("\nContent after 'Steps:'");
+    console.log(steps);
+  
+    return { answer, explanation, steps };
+  };
 
   useEffect(() => {
     if (questionData) {
-      const parsedQuestionData = JSON.parse(questionData);
 
       // Send a POST request with the questionData
       const postData = async () => {
         try {
-          const response = await fetch('https://j41h2gukz6.execute-api.us-east-1.amazonaws.com/dev/openai-path', {
+          const res = await fetch('https://j41h2gukz6.execute-api.us-east-1.amazonaws.com/dev/openai-path', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -26,9 +59,14 @@ export default function Question() {
             body: questionData,
           });
           // Handle the response as needed
-          if (response.ok) {
-            const responseData = await response.json();
-            setResponse(responseData);
+          if (res.ok) {
+            const responseData = await res.json();
+            console.log("responseData:", responseData);
+            const result = responseData.result
+            const { answer, explanation, steps } = extractContent(result);
+            setAnswer(answer);
+            setExplanation(explanation);
+            setSteps(steps);
           } else {
             // Handle error
             console.error('Request failed');
@@ -45,7 +83,7 @@ export default function Question() {
 
   return (
     <>
-      <div className="bg-zinc-700 w-full h-screen flex justify-center mt-[64px]">
+      <div className="bg-zinc-700 w-full flex justify-center mt-[64px]">
           <div className="flex w-[1024px] flex-wrap md:flex-nowrap gap-6 px-6 py-5">
               <div className="w-full rounded-xl h-fit bg-zinc-800">
                 <div className="p-5 border-b-2 border-zinc-700">
@@ -102,43 +140,37 @@ export default function Question() {
                 <div className="p-5 border-b-2 border-zinc-700">
                   <h1 className="text-white font-bold text-3xl">Result</h1>
                 </div>
-                <div className="p-5">
+                <div className="p-5 relative">
+
+                  {answer&&explanation&&steps ? <></> : (
+                    <div className="backdrop-blur-sm absolute w-full h-full top-0 left-0 z-10">
+                      <div className="h-full flex flex-col items-center justify-center">
+                        <h1 className="text-white font-bold text-2xl">Loading...</h1>
+                      </div>
+                    </div>
+                  )}
+
                   <h2 className="text-white font-bold text-lg mb-2">Answer</h2>
                   <p className="text-white font-extralight text-sm mb-2">The answer to your question</p>
-                  <ScrollShadow className="w-full bg-zinc-700 rounded-xl p-4 text-white h-[400px] border-1 border-zinc-500">
-                    {response ? <div><p>{response.result}</p></div> : (
-                      <div>
-                        <p>
-                          Sit nulla est ex deserunt exercitation anim occaecat. Nostrud ullamco deserunt aute id consequat veniam incididunt duis in sint irure nisi. Mollit officia cillum Lorem ullamco minim nostrud elit officia tempor esse quis.
-                        </p>
-                        <p>
-                          Sunt ad dolore quis aute consequat. Magna exercitation reprehenderit magna aute tempor cupidatat consequat elit dolor adipisicing. Mollit dolor eiusmod sunt ex incididunt cillum quis. Velit duis sit officia eiusmod Lorem aliqua enim laboris do dolor eiusmod. Et mollit incididunt nisi consectetur esse laborum eiusmod pariatur proident Lorem eiusmod et. Culpa deserunt nostrud ad veniam.
-                        </p>
-                        <p>
-                          Est velit labore esse esse cupidatat. Velit id elit consequat minim. Mollit enim excepteur ea laboris adipisicing aliqua proident occaecat do do adipisicing adipisicing ut fugiat. Consequat pariatur ullamco aute sunt esse. Irure excepteur eu non eiusmod. Commodo commodo et ad ipsum elit esse pariatur sit adipisicing sunt excepteur enim.
-                        </p>
-                        <p>
-                          Incididunt duis commodo mollit esse veniam non exercitation dolore occaecat ea nostrud laboris. Adipisicing occaecat fugiat fugiat irure fugiat in magna non consectetur proident fugiat. Commodo magna et aliqua elit sint cupidatat. Sint aute ullamco enim cillum anim ex. Est eiusmod commodo occaecat consequat laboris est do duis. Enim incididunt non culpa velit quis aute in elit magna ullamco in consequat ex proident.
-                        </p>
-                        <p>
-                          Dolore incididunt mollit fugiat pariatur cupidatat ipsum laborum cillum. Commodo consequat velit cupidatat duis ex nisi non aliquip ad ea pariatur do culpa. Eiusmod proident adipisicing tempor tempor qui pariatur voluptate dolor do ea commodo. Veniam voluptate cupidatat ex nisi do ullamco in quis elit.
-                        </p>
-                        <p>
-                          Cillum proident veniam cupidatat pariatur laborum tempor cupidatat anim eiusmod id nostrud pariatur tempor reprehenderit. Do esse ullamco laboris sunt proident est ea exercitation cupidatat. Do Lorem eiusmod aliqua culpa ullamco consectetur veniam voluptate cillum. Dolor consequat cillum tempor laboris mollit laborum reprehenderit reprehenderit veniam aliqua deserunt cupidatat consequat id.
-                        </p>
-                        <p>
-                          Est id tempor excepteur enim labore sint aliquip consequat duis minim tempor proident. Dolor incididunt aliquip minim elit ea. Exercitation non officia eu id.
-                        </p>
-                        <p>
-                          Ipsum ipsum consequat incididunt do aliquip pariatur nostrud. Qui ut sint culpa labore Lorem. Magna deserunt aliquip aute duis consectetur magna amet anim. Magna fugiat est nostrud veniam. Officia duis ea sunt aliqua.
-                        </p>
-                        <p>
-                          Ipsum minim officia aute anim minim aute aliquip aute non in non. Ipsum aliquip proident ut dolore eiusmod ad fugiat fugiat ut ex. Ea velit Lorem ut et commodo nulla voluptate veniam ea et aliqua esse id. Pariatur dolor et adipisicing ea mollit. Ipsum non irure proident ipsum dolore aliquip adipisicing laborum irure dolor nostrud occaecat exercitation.
-                        </p>
-                        <p>
-                          Culpa qui reprehenderit nostrud aliqua reprehenderit et ullamco proident nisi commodo non ut. Ipsum quis irure nisi sint do qui velit nisi. Sunt voluptate eu reprehenderit tempor consequat eiusmod Lorem irure velit duis Lorem laboris ipsum cupidatat. Pariatur excepteur tempor veniam cillum et nulla ipsum veniam ad ipsum ad aute. Est officia duis pariatur ad eiusmod id voluptate.
-                        </p>
-                      </div>
+                  <ScrollShadow className="w-full bg-zinc-700 rounded-xl p-4 text-white h-[200px] border-1 border-zinc-500">
+                    {answer ? <div><p>{answer}</p></div> : (
+                      <p>Loading...</p>
+                    )}
+                  </ScrollShadow>
+
+                  <h2 className="text-white font-bold text-lg mb-2 mt-[20px]">Explanation</h2>
+                  <p className="text-white font-extralight text-sm mb-2">The explanation to your question</p>
+                  <ScrollShadow className="w-full bg-zinc-700 rounded-xl p-4 text-white h-[150px] border-1 border-zinc-500">
+                    {explanation ? <div><p>{explanation}</p></div> : (
+                      <p>Loading...</p>
+                    )}
+                  </ScrollShadow>
+
+                  <h2 className="text-white font-bold text-lg mb-2 mt-[20px]">Steps</h2>
+                  <p className="text-white font-extralight text-sm mb-2">The steps to your question</p>
+                  <ScrollShadow className="w-full bg-zinc-700 rounded-xl p-4 text-white h-[150px] border-1 border-zinc-500">
+                    {steps ? <div><p>{steps}</p></div> : (
+                      <p>Loading...</p>
                     )}
                   </ScrollShadow>
                 </div>
