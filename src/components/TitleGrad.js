@@ -2,7 +2,7 @@ import { Button, Textarea, Select, SelectItem } from "@nextui-org/react";
 import { subjects } from "@/data/subjects";
 import { grades } from "@/data/grades";
 import { useRouter } from 'next/router';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { arrayUnion, collection, doc, increment, addDoc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase/firebase";
 import { UserAuth } from "@/context/AuthContext";
@@ -40,6 +40,34 @@ const TitleGrad = () => {
           });
         }
     };
+
+    const [demoUsed, setDemoUsed] = useState(false);
+
+    useEffect(() => {
+        // Check if the value exists in localStorage
+        const savedItem = localStorage.getItem('answerObj');
+        console.log("savedItem (title):", savedItem)
+        if (savedItem && !user) {
+            setDemoUsed(true);
+            // Retrieve the stored object and its timestamp
+            const { value, timestamp } = JSON.parse(savedItem);
+
+            // Check if 24 hours have passed (in milliseconds)
+            const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+            const now = new Date().getTime();
+
+            if (now - timestamp > twentyFourHours) {
+                // If 24 hours have passed, remove the item from localStorage
+                localStorage.removeItem('answerObj');
+                console.log('Value removed after 24 hours.');
+            } else {
+                // Value is within the 24-hour window, use the stored value
+                console.log('Value within 24 hours:', value);
+            }
+        } else {
+            setDemoUsed(false);
+        }
+    }, [user])
     
     const handleButtonClick = async () => {
 
@@ -69,6 +97,18 @@ const TitleGrad = () => {
                 console.log(err);
             }
         } else {
+            // If the value doesn't exist in localStorage, you can set it now
+            const newTimestamp = new Date().getTime();
+            
+            const newItem = {
+                value: true,
+                timestamp: newTimestamp
+            };
+        
+            // Store the value along with its timestamp in localStorage
+            localStorage.setItem('answerObj', JSON.stringify(newItem));
+            console.log('Value set in localStorage.');
+
             try {
                 const docRef = await addDoc(collection(db, "otherQuestions"), {
                     question: questionData
@@ -101,7 +141,7 @@ const TitleGrad = () => {
                         <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
                             <Select
                                 name="subject"
-                                label="Subject"
+                                label="Subject (All languages supported)"
                                 placeholder="Choose subject"
                                 labelPlacement="inside"
                                 className="w-full"
@@ -143,9 +183,15 @@ const TitleGrad = () => {
                             />
                         </div>
                         <div className="flex justify-center">
-                            <Button onClick={handleButtonClick} color="success" className="w-full md:max-w-sm font-bold text-white">
-                                Answer
-                            </Button>
+                            {demoUsed ? (
+                                <Button isDisabled color="success" className="w-full md:max-w-sm font-bold text-white">
+                                    Answer
+                                </Button>
+                            ): (
+                                <Button onClick={handleButtonClick} color="success" className="w-full md:max-w-sm font-bold text-white">
+                                    Answer
+                                </Button>
+                            )}
                         </div>
                     </div>
                 </div>

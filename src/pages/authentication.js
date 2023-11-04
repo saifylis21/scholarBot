@@ -1,5 +1,4 @@
 import { GoogleButton } from 'react-google-button'
-import { redirect } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { UserAuth } from "@/context/AuthContext";
 
@@ -11,7 +10,6 @@ export default function Authentication() {
     const handleSignIn = async () => {
         try {
             await googleSignIn()
-            redirect('/');
         } catch (error) {
             console.log(error)
         }
