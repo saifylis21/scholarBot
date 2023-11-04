@@ -8,7 +8,7 @@ import { db } from "@/firebase/firebase";
 import { UserAuth } from "@/context/AuthContext";
 
 const TitleGrad = () => {
-
+    
     const router = useRouter();
 
     const [questionData, setQuestionData] = useState({
@@ -40,22 +40,20 @@ const TitleGrad = () => {
           });
         }
     };
+    
+    const handleButtonClick = async () => {
 
-    const [demoUsed, setDemoUsed] = useState(false);
-
-    useEffect(() => {
         // Check if the value exists in localStorage
         const savedItem = localStorage.getItem('answerObj');
-        console.log("savedItem (title):", savedItem)
-        if (savedItem && !user) {
-            setDemoUsed(true);
+        
+        if (savedItem) {
             // Retrieve the stored object and its timestamp
             const { value, timestamp } = JSON.parse(savedItem);
-
+        
             // Check if 24 hours have passed (in milliseconds)
             const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
             const now = new Date().getTime();
-
+        
             if (now - timestamp > twentyFourHours) {
                 // If 24 hours have passed, remove the item from localStorage
                 localStorage.removeItem('answerObj');
@@ -63,13 +61,28 @@ const TitleGrad = () => {
             } else {
                 // Value is within the 24-hour window, use the stored value
                 console.log('Value within 24 hours:', value);
+
+                const parsedItem = JSON.parse(savedItem);
+                parsedItem.value = value + 1;
+                // Store the updated value back in localStorage
+                console.log("Parsed Item:", parsedItem)
+                localStorage.setItem('answerObj', JSON.stringify(parsedItem));
+                console.log('Value updated in localStorage.');
             }
         } else {
-            setDemoUsed(false);
+            // If the value doesn't exist in localStorage, you can set it now
+            const newTimestamp = new Date().getTime();
+            
+            const newItem = {
+                value: 1,
+                timestamp: newTimestamp
+            };
+        
+            // Store the value along with its timestamp in localStorage
+            localStorage.setItem('answerObj', JSON.stringify(newItem));
+            console.log('Value set in localStorage.');
         }
-    }, [user])
-    
-    const handleButtonClick = async () => {
+        
 
         if(user && user.email) {
             try {
@@ -97,18 +110,6 @@ const TitleGrad = () => {
                 console.log(err);
             }
         } else {
-            // If the value doesn't exist in localStorage, you can set it now
-            const newTimestamp = new Date().getTime();
-            
-            const newItem = {
-                value: true,
-                timestamp: newTimestamp
-            };
-        
-            // Store the value along with its timestamp in localStorage
-            localStorage.setItem('answerObj', JSON.stringify(newItem));
-            console.log('Value set in localStorage.');
-
             try {
                 const docRef = await addDoc(collection(db, "otherQuestions"), {
                     question: questionData
@@ -183,15 +184,9 @@ const TitleGrad = () => {
                             />
                         </div>
                         <div className="flex justify-center">
-                            {demoUsed ? (
-                                <Button isDisabled color="success" className="w-full md:max-w-sm font-bold text-white">
-                                    Answer
-                                </Button>
-                            ): (
-                                <Button onClick={handleButtonClick} color="success" className="w-full md:max-w-sm font-bold text-white">
-                                    Answer
-                                </Button>
-                            )}
+                            <Button onClick={handleButtonClick} color="success" className="w-full md:max-w-sm font-bold text-white">
+                                Answer
+                            </Button>
                         </div>
                     </div>
                 </div>

@@ -93,9 +93,9 @@ export default function Question() {
 
   useEffect(() => {
     // Check if the value exists in localStorage
-    const savedItem = localStorage.getItem('answerObj');
+    const savedItem = JSON.parse(localStorage.getItem('answerObj'));
     console.log("savedItem (question):", savedItem)
-    if (savedItem && !user) {
+    if (savedItem.value > 1 && !user) {
       setDemoUsed(true);
     } else {
       setDemoUsed(false);
@@ -152,125 +152,118 @@ export default function Question() {
     <>
       <div className="bg-zinc-700 w-full flex justify-center mt-[64px]">
           <div className="flex w-[1024px] flex-wrap md:flex-nowrap gap-6 px-6 py-5">
+            <div className="w-full rounded-xl h-fit bg-zinc-800">
+              <div className="p-5 border-b-2 border-zinc-700">
+                <h1 className="text-white font-bold text-3xl">Question</h1>
+              </div>
+              <div className="p-5">
+                <div className="flex flex-col gap-4">
+                  <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
+                    <Select
+                        label="Subject"
+                        placeholder={"Choose subject"}
+                        labelPlacement="inside"
+                        className="w-full md:max-w-sm"
+                        selectedKeys={subjectValue}
+                    >
+                        {subjects.map((subject) => (
+                        <SelectItem key={subject.value} value={subject.value}>
+                            {subject.label}
+                        </SelectItem>
+                        ))}
+                    </Select>
 
-              {answer&&explanation&&steps ? (
-                <>
-                  <div className="w-full rounded-xl h-fit bg-zinc-800">
-                    <div className="p-5 border-b-2 border-zinc-700">
-                      <h1 className="text-white font-bold text-3xl">Question</h1>
-                    </div>
-                    <div className="p-5">
-                      <div className="flex flex-col gap-4">
-                        <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
-                          <Select
-                              label="Subject"
-                              placeholder={"Choose subject"}
-                              labelPlacement="inside"
-                              className="w-full md:max-w-sm"
-                              selectedKeys={subjectValue}
-                          >
-                              {subjects.map((subject) => (
-                              <SelectItem key={subject.value} value={subject.value}>
-                                  {subject.label}
-                              </SelectItem>
-                              ))}
-                          </Select>
-
-                          <Select
-                              label="Grade"
-                              placeholder="Choose grade"
-                              labelPlacement="inside"
-                              className="w-full md:max-w-sm"
-                              selectedKeys={gradeValue}
-                          >
-                              {grades.map((grade) => (
-                              <SelectItem key={grade.value} value={grade.value}>
-                                  {grade.label}
-                              </SelectItem>
-                              ))}
-                          </Select>
-                        </div>
-
-                        <div>
-                          <Textarea
-                              label="Your homework question"
-                              labelPlacement="inside"
-                              placeholder="Enter your homework question here..."
-                              className="w-full"
-                              value={questionValue}
-                          />
-                        </div>
-
-                        <div className="flex justify-center">
-                          {demoUsed ? (
-                            <Button isDisabled color="success" className="w-full font-bold text-white">
-                                Answer
-                            </Button>
-                          ) : (
-                            <Button onClick={handleButtonClick} color="success" className="w-full font-bold text-white">
-                                Answer
-                            </Button>
-                          )}
-                        </div>
-                      </div>
-                    </div>
+                    <Select
+                        label="Grade"
+                        placeholder="Choose grade"
+                        labelPlacement="inside"
+                        className="w-full md:max-w-sm"
+                        selectedKeys={gradeValue}
+                    >
+                        {grades.map((grade) => (
+                        <SelectItem key={grade.value} value={grade.value}>
+                            {grade.label}
+                        </SelectItem>
+                        ))}
+                    </Select>
                   </div>
-                  <div className="w-full rounded-xl h-fit bg-zinc-800">
-                    <div className="p-5 border-b-2 border-zinc-700">
-                      <h1 className="text-white font-bold text-3xl">Result</h1>
-                    </div>
-                    <div className="relative">
 
-                      <div className="p-5">
-                        <h2 className="text-white font-bold text-lg mb-2">Answer</h2>
-                        <p className="text-white font-extralight text-sm mb-2">The answer to your question</p>
-                        <ScrollShadow className="w-full bg-zinc-700 rounded-xl p-4 text-white h-[200px] border-1 border-zinc-500">
-                          {answer ? <div><p>{answer}</p></div> : (
-                            <p>Loading...</p>
-                          )}
-                        </ScrollShadow>
-                      </div>
-
-                      <div className="relative p-5">
-
-                        {user&&user.email ? <></> : (
-                          <div className="backdrop-blur-sm absolute w-full h-full top-0 left-0 z-10">
-                            <div className="h-full flex flex-col items-center justify-center">
-                              <h1 className="text-white font-bold text-2xl text-center">Sign In<br/>to see the Explanation<br/>and Steps</h1>
-                          </div>
-                        </div>)}
-
-                        <h2 className="text-white font-bold text-lg mb-2 mt-[20px]">Explanation</h2>
-                        <p className="text-white font-extralight text-sm mb-2">The explanation to your question</p>
-                        <ScrollShadow className="w-full bg-zinc-700 rounded-xl p-4 text-white h-[150px] border-1 border-zinc-500">
-                          {explanation ? <div><p>{explanation}</p></div> : (
-                            <p>Loading...</p>
-                          )}
-                        </ScrollShadow>
-
-                        <h2 className="text-white font-bold text-lg mb-2 mt-[20px]">Steps</h2>
-                        <p className="text-white font-extralight text-sm mb-2">The steps to your question</p>
-                        <ScrollShadow className="w-full bg-zinc-700 rounded-xl p-4 text-white h-[150px] border-1 border-zinc-500">
-                          {steps ? <div><p>{steps}</p></div> : (
-                            <p>Loading...</p>
-                          )}
-                        </ScrollShadow>
-                      </div>
-                    </div>
+                  <div>
+                    <Textarea
+                        label="Your homework question"
+                        labelPlacement="inside"
+                        placeholder="Enter your homework question here..."
+                        className="w-full"
+                        value={questionValue}
+                    />
                   </div>
-                </>
-              ) : (
-                <div className="w-full h-screen flex flex-col items-center justify-center">
-                  <div className="flex">
-                    <div className="relative">
-                      {/* <!-- Outer Ring--> */}
-                      <div className="w-12 h-12 rounded-full absolute border-2 border-solid border-gray-200"></div>
-                      {/* <!-- Inner Ring --> */}
-                      <div className="w-12 h-12 rounded-full animate-spin absolute border-2 border-solid border-blue-500 border-t-transparent shadow-md"></div>
-                    </div>
+
+                  <div className="flex justify-center">
+                    <Button onClick={handleButtonClick} color="success" className="w-full font-bold text-white">
+                      Answer
+                    </Button>
                   </div>
                 </div>
-              )}
+              </div>
+            </div>
+            <div className="w-full rounded-xl h-fit bg-zinc-800">
+              <div className="p-5 border-b-2 border-zinc-700">
+                <h1 className="text-white font-bold text-3xl">Result</h1>
+              </div>
+              <div className="relative">
+                {demoUsed ? (
+                  <div className="backdrop-blur-sm absolute w-full h-full top-0 left-0 z-30">
+                    <div className="h-full flex flex-col items-center justify-center">
+                      <h1 className="text-white font-bold text-4xl text-center">Sign In<br/>to get more<br/>answers!</h1>
+                    </div>
+                  </div>
+                ) : <></>}
+
+                {answer&&explanation&&steps ? <></> : (
+                  <div className="backdrop-blur-sm absolute w-full h-full top-0 left-0 z-20">
+                    <div className="h-full flex flex-col items-center justify-center">
+                      <h1 className="text-white font-bold text-2xl text-center">If only homework<br/>could solve itself...<br/>Oh wait,<br/>it can now!</h1>
+                    </div>
+                  </div>
+                )}
+                <div className="p-5">
+                  <h2 className="text-white font-bold text-lg mb-2">Answer</h2>
+                  <p className="text-white font-extralight text-sm mb-2">The answer to your question</p>
+                  <ScrollShadow className="w-full bg-zinc-700 rounded-xl p-4 text-white h-[200px] border-1 border-zinc-500">
+                    {answer ? <div><p>{answer}</p></div> : (
+                      <p>Loading...</p>
+                    )}
+                  </ScrollShadow>
+                </div>
+
+                <div className="relative p-5">
+
+                  {user&&user.email ? <></> : (
+                    <div className="backdrop-blur-sm absolute w-full h-full top-0 left-0 z-10">
+                      <div className="h-full flex flex-col items-center justify-center">
+                        <h1 className="text-white font-bold text-2xl text-center">Sign In<br/>to see the Explanation<br/>and Steps</h1>
+                      </div>
+                    </div>
+                  )}
+
+                  <h2 className="text-white font-bold text-lg mb-2 mt-[20px]">Explanation</h2>
+                  <p className="text-white font-extralight text-sm mb-2">The explanation to your question</p>
+                  <ScrollShadow className="w-full bg-zinc-700 rounded-xl p-4 text-white h-[150px] border-1 border-zinc-500">
+                    {explanation ? <div><p>{explanation}</p></div> : (
+                      <p>Loading...</p>
+                    )}
+                  </ScrollShadow>
+
+                  <h2 className="text-white font-bold text-lg mb-2 mt-[20px]">Steps</h2>
+                  <p className="text-white font-extralight text-sm mb-2">The steps to your question</p>
+                  <ScrollShadow className="w-full bg-zinc-700 rounded-xl p-4 text-white h-[150px] border-1 border-zinc-500">
+                    {steps ? <div><p>{steps}</p></div> : (
+                      <p>Loading...</p>
+                    )}
+                  </ScrollShadow>
+                </div>
+              </div>
+            </div>
           </div>
       </div>
     </>
