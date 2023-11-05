@@ -2,13 +2,13 @@ import { Button, Textarea, Select, SelectItem } from "@nextui-org/react";
 import { subjects } from "@/data/subjects";
 import { grades } from "@/data/grades";
 import { useRouter } from 'next/router';
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { arrayUnion, collection, doc, increment, addDoc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase/firebase";
 import { UserAuth } from "@/context/AuthContext";
 
 const TitleGrad = () => {
-    
+
     const router = useRouter();
 
     const [questionData, setQuestionData] = useState({
